@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" version="4.0" method="upgrade" group="pcp">
+	<name>PLG_PCP_BTCPAY_SERVER</name>
+	<author>Jacquesvw</author>
+	<authorUrl>https://github.com/Jacquesvw</authorUrl>
+	<creationDate>2024-06-08</creationDate>
+	<copyright>None</copyright>
+	<license>Unlicense</license>
+	<version>1.0.0</version>
+	<description>PLG_PCP_BTCPAY_SERVER_DESCRIPTION</description>
+	
+	<!-- Files to be copied -->
+	<files>
+		<filename plugin="btcpay_server">btcpay_server.php</filename>
+		<filename>controller.php</filename>
+		<filename>script.php</filename>
+		<filename>index.html</filename>
+		<folder>helpers</folder>
+		<folder>fields</folder>
+	</files>
+	
+	<!-- The script file for post-installation actions -->
+	<scriptfile>script.php</scriptfile>
+	
+	<!-- Site language files -->
+	<languages>
+		<language tag="en-GB">language/en-GB/en-GB.plg_pcp_btcpay_server.ini</language>
+		<language tag="en-GB">language/en-GB/en-GB.plg_pcp_btcpay_server.sys.ini</language>
+	</languages>
+	
+	<!-- Administration section -->
+	<administration>
+		<!-- Admin language files -->
+		<languages>
+			<language tag="en-GB">language/en-GB/en-GB.plg_pcp_btcpay_server.ini</language>
+			<language tag="en-GB">language/en-GB/en-GB.plg_pcp_btcpay_server.sys.ini</language>
+		</languages>
+	</administration>
+	
+	<!-- Plugin configuration parameters -->
+	<form>
+		<fields name="params" addfieldpath="/administrator/components/com_phocacart/models/fields">
+			<fieldset name="payment" addfieldpath="/plugins/pcp/btcpay_server/fields" group="pcp">
+				<field name="required_settings" type="note" class="alert alert-light w-100" label="PLG_PCP_BTCPAY_SERVER_NOTE_REQUIRED_SETTINGS" description="PLG_PCP_BTCPAY_SERVER_NOTE_REQUIRED_SETTINGS_DESC"/>
+				<field name="btcpay_server_host" type="url" class="inputbox" size="40" label="PLG_PCP_BTCPAY_SERVER_FIELD_BTCPAY_SERVER_HOST" description="PLG_PCP_BTCPAY_SERVER_FIELD_BTCPAY_SERVER_HOST_DESC" required="true"/>
+				<field name="btcpay_server_store_id" type="text" class="inputbox" size="40" label="PLG_PCP_BTCPAY_SERVER_FIELD_BTCPAY_SERVER_STORE_ID" description="PLG_PCP_BTCPAY_SERVER_FIELD_BTCPAY_SERVER_STORE_ID_DESC" required="true"/>
+				<field name="btcpay_server_api_key" type="btcpaypasswordtoggle" size="40" label="PLG_PCP_BTCPAY_SERVER_FIELD_BTCPAY_SERVER_API_KEY" description="PLG_PCP_BTCPAY_SERVER_FIELD_BTCPAY_SERVER_API_KEY_DESC" required="true"/>
+				<field name="webhook_settings" type="note" class="alert alert-light w-100" label="PLG_PCP_BTCPAY_SERVER_NOTE_WEBHOOK_SETTINGS" description="PLG_PCP_BTCPAY_SERVER_NOTE_WEBHOOK_SETTINGS_DESC"/>
+				<field name="btcpay_server_webhook_url" type="btcpaywebhookurl" size="40" label="PLG_PCP_BTCPAY_SERVER_FIELD_BTCPAY_SERVER_WEBHOOK_URL" description="PLG_PCP_BTCPAY_SERVER_FIELD_BTCPAY_SERVER_WEBHOOK_URL_DESC" readonly="true"/>
+				<field name="btcpay_server_webhook_secret" type="btcpaypasswordtoggle" size="40" label="PLG_PCP_BTCPAY_SERVER_FIELD_BTCPAY_SERVER_WEBHOOK_SECRET" description="PLG_PCP_BTCPAY_SERVER_FIELD_BTCPAY_SERVER_WEBHOOK_SECRET_DESC" required="true"/>
+				<field name="btcpay_server_webhook_id" type="hidden" default="" />
+				<field name="btcpay_server_button" type="btcpaywebhookbutton" />
+				<field name="order_statuses" type="note" class="alert alert-light w-100" label="PLG_PCP_BTCPAY_SERVER_NOTE_ORDER_STATUSES" description="PLG_PCP_BTCPAY_SERVER_NOTE_ORDER_STATUSES_DESC"/>
+				<field name="status_new" type="PhocaCartOrderStatus" default="1" label="PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_STATUS_NEW_LABEL" description="PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_STATUS_NEW_DESC"/>
+				<field name="status_processing" type="PhocaCartOrderStatus" default="1" label="PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_STATUS_PROCESSING_LABEL" description="PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_STATUS_PROCESSING_DESC"/>
+				<field name="status_settled" type="PhocaCartOrderStatus" default="6" label="PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_STATUS_SETTLED_LABEL" description="PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_STATUS_SETTLED_DESC"/>
+				<field name="status_paid_partial" type="PhocaCartOrderStatus" default="1" label="PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_STATUS_PAID_PARTIAL_LABEL" description="PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_STATUS_PAID_PARTIAL_DESC"/>
+				<field name="status_paid_over" type="PhocaCartOrderStatus" default="1" label="PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_STATUS_PAID_OVER_LABEL" description="PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_STATUS_PAID_OVER_DESC"/>
+				<field name="status_expired" type="PhocaCartOrderStatus" default="1" label="PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_STATUS_EXPIRED_LABEL" description="PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_STATUS_EXPIRED_DESC"/>
+				<field name="status_paid_late" type="PhocaCartOrderStatus" default="1" label="PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_STATUS_PAID_LATE_LABEL" description="PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_STATUS_PAID_LATE_DESC"/>
+				<field name="status_invalid" type="PhocaCartOrderStatus" default="1" label="PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_STATUS_INVALID_LABEL" description="PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_STATUS_INVALID_DESC"/>
+				<field name="invoice_data" type="note" class="alert alert-light w-100" label="PLG_PCP_BTCPAY_SERVER_NOTE_INVOICE_DATA" description="PLG_PCP_BTCPAY_SERVER_NOTE_INVOICE_DATA_DESC"/>
+				<field name="customer_data" type="checkboxes" label="PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_CUSTOMER_DATA_LABEL" description="PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_CUSTOMER_DATA_DESC">
+					<option value="name" checked="0">PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_CUSTOMER_DATA_NAME_LABEL</option>
+					<option value="email" checked="0">PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_CUSTOMER_DATA_EMAIL_LABEL</option>
+					<option value="phone" checked="0">PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_CUSTOMER_DATA_PHONE_LABEL</option>
+					<option value="address" checked="0">PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_CUSTOMER_DATA_ADDRESS_LABEL</option>
+					<option value="tax" checked="0">PLG_PCP_BTCPAY_SERVER_DEFAULT_ORDER_CUSTOMER_DATA_TAX_LABEL</option>
+				</field>
+				<field name="currency_mode" type="radio" label="PLG_PCP_BTCPAY_SERVER_FIELD_CURRENCY_MODE_LABEL" description="PLG_PCP_BTCPAY_SERVER_FIELD_CURRENCY_MODE_DESC" default="default_currency" class="btn-group btn-group-yesno">
+					<option value="default_currency">PLG_PCP_BTCPAY_SERVER_OPTION_DEFAULT_CURRENCY</option>
+					<option value="order_currency">PLG_PCP_BTCPAY_SERVER_OPTION_ORDER_CURRENCY</option>
+				</field>
+				<field name="checkout_settings" type="note" class="alert alert-light w-100" label="PLG_PCP_BTCPAY_SERVER_NOTE_CHECKOUT_SETTINGS" description="PLG_PCP_BTCPAY_SERVER_NOTE_CHECKOUT_SETTINGS_DESC"/>
+				<field name="checkout_mode" type="radio" label="PLG_PCP_BTCPAY_SERVER_FIELD_CHECKOUT_MODE_LABEL" description="PLG_PCP_BTCPAY_SERVER_FIELD_CHECKOUT_MODE_DESC" default="auto_generate_invoice" class="btn-group btn-group-yesno">
+					<option value="auto_generate_invoice">PLG_PCP_BTCPAY_SERVER_OPTION_AUTO_GENERATE_INVOICE</option>
+					<option value="show_info_before_payment">PLG_PCP_BTCPAY_SERVER_OPTION_SHOW_INFO_BEFORE_PAYMENT</option>
+				</field>
+				<field name="checkout_info" type="textarea" label="PLG_PCP_BTCPAY_SERVER_FIELD_CHECKOUT_INFO_LABEL" description="PLG_PCP_BTCPAY_SERVER_FIELD_CHECKOUT_INFO_DESC" rows="6" filter="safehtml" showon="checkout_mode:show_info_before_payment" default="Click the 'Pay Now' button below when you are ready to proceed. The exact amount of Bitcoin and the destination address will be provided. Please complete the transaction within the given time to avoid potential changes to the exchange rate."/>
+			</fieldset>
+		</fields>
+	</form>
+	
+	<!-- Update server -->
+	<updateservers>
+		<server type="extension" name="PLG_PCP_BTCPAY_SERVER" priority="1"><![CDATA[https://raw.githubusercontent.com/Jacquesvw/PhocaCart-BtcpayServer-Plugin/main/src/plg_pcp_btcpay/manifest.xml]]></server>
+	</updateservers>
+</extension>
