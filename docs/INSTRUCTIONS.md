@@ -24,7 +24,7 @@
 2. ### Install the plugin:
    - From the Joomla! Administrator dashboard, select the ‘System’ menu [1], then ‘Extensions’ [2] under the ‘Install’ heading.
    
-   <img src="images/1-install-extensions.png" alt="Install extensions" style=width:600px; margin-left: 20px;">
+   <img src="images/1-install-extensions.png" alt="Install extensions" style=width:600px;">
    
    - On the "Upload Package File" tab, upload the `plg_pcp_btcpay.zip` file.
    
