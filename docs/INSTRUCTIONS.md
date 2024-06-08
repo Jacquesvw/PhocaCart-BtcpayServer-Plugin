@@ -102,6 +102,7 @@
 1. ### Order Statuses
    
      <img src="images/15-order-statuses.png" alt="Order statuses" style="width:600px; margin-left: 20px;">
+     
    - **New Invoice Status**: Set when a new BTCPay Server invoice is generated.
    - **Unconfirmed Payment Status**: Set when a payment has been made but not yet confirmed on the blockchain.
    - **Confirmed Payment Status**: Set when payment has been confirmed.
@@ -116,6 +117,7 @@
 2. ### Invoice Data Settings
    
      <img src="images/16-invoice-data-settings.png" alt="Invoice data settings" style="width:600px; margin-left: 20px;">
+     
    - **Customer Data on Invoice**: Specify which customer data to include on the BTCPay Server Invoice.
    - **Invoice Currency**:
      - If your store supports multiple currencies and you select ‘Use Default Currency Only’, the BTCPay Server Invoice will always be denominated in the store’s default currency regardless of the currency selected by the client. Ensure that BTCPay Server is configured to determine the Bitcoin exchange rate for the default currency.
@@ -124,6 +126,7 @@
 3. ### Checkout Settings
    
      <img src="images/17-checkout-settings.png" alt="Checkout Settings" style="width:600px; margin-left: 20px;">
+     
    - **Automatically Generate Invoice**: Automatically show the BTCPay Server payment popup during checkout.
    - **Show Information Before Payment**: Show additional information to the client before they have to click the “Pay Now” button to display the BTCPay Server payment popup.
    
