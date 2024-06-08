@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<updates>
+	<update>
+		<name><![CDATA[Phoca Cart Payment - BTCPay Server Plugin]]></name>
+		<description><![CDATA[Phoca Cart Payment - BTCPay Server payment method for Phoca Cart component.]]></description>
+		<element>btcpay_server</element>
+		<folder>pcp</folder>
+		<type>plugin</type>
+		<version>1.0.0</version>
+		<downloads>
+			<downloadurl type="full" format="zip">https://github.com/Jacquesvw/PhocaCart-BtcpayServer-Plugin/releases/download/v1.0.0/plg_pcp_btcpay.zip</downloadurl>
+		</downloads>
+		<tags>
+			<tag>stable</tag>
+		</tags>
+		<maintainer><![CDATA[Jacquesvw]]></maintainer>
+		<maintainerurl><![CDATA[https://github.com/Jacquesvw]]></maintainerurl>
+		<targetplatform name="joomla" version="(4|5)\.*"/>
+		<client>site</client>
+		<checksums>
+			<checksum type="sha256">67a964180915e4aedf5ac24b480b9a97761c60a32b814b8b52058f16a633f7f8</checksum>
+		</checksums>
+	</update>
+</updates>
