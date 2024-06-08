@@ -19,7 +19,7 @@
 ## Install BTCPay Plugin
 
 1. ### Download the plugin:
-   Download it from GitHub.
+   Download it from [GitHub](https://github.com/Jacquesvw/PhocaCart-BtcpayServer-Plugin/releases).
 
 2. ### Install the plugin:
    - From the Joomla! Administrator dashboard, select the ‘System’ menu [1], then ‘Extensions’ [2] under the ‘Install’ heading.
