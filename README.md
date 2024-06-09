@@ -2,7 +2,7 @@
 
 ## Summary
 
-The Phoca Cart BTCPay Plugin allows you to integrate BTCPay Server as a payment method in your Joomla! website using Phoca Cart. BTCPay Server is a self-hosted, open-source cryptocurrency payment processor that enables you to accept Bitcoin and other cryptocurrencies.
+The Phoca Cart BTCPay Plugin allows you to integrate [BTCPay Server](https://btcpayserver.org) as a payment method in your [Joomla!](https://www.joomla.org) website using [Phoca Cart](https://www.phoca.cz). BTCPay Server is a self-hosted, open-source cryptocurrency payment processor that enables you to accept Bitcoin and other cryptocurrencies.
 
 ## Requirements
 
@@ -12,7 +12,7 @@ The Phoca Cart BTCPay Plugin allows you to integrate BTCPay Server as a payment 
 
 ## Instructions
 
-For detailed installation and configuration instructions, please refer to the [BTCPay Plugin Instructions](docs/INSTRUCTIONS.md).
+For detailed installation and configuration instructions, please refer to the [INSTRUCTIONS](docs/INSTRUCTIONS.md).
 
 ## License
 
