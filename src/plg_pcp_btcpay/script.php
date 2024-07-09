@@ -340,7 +340,7 @@ class plgPCPBtcpay_ServerInstallerScript extends InstallerScript
 										'<p><strong>Customer Name:</strong> {bs_name_first} {bs_name_last}</p>'.
 										'<p><strong>Order Number:</strong> {ordernumber}</p>'.
 										'<p><strong>Customer Email:</strong> {b_email}</p>'.
-										'<p><strong>Link to make outstanding payment:</strong> <a href="{websiteurl}index.php?option=com_phocacart&amp;view=response&amp;task=response.paymentnotify&amp;type=btcpay_server&amp;o={ordertoken}"></a></p>'.
+										'<p><strong>Link to make outstanding payment:</strong> <a href="{websiteurl}index.php?option=com_phocacart&amp;view=response&amp;task=response.paymentnotify&amp;type=btcpay_server&amp;o={ordertoken}">Payment Link</a></p>'.
 										'<p>Please ensure to monitor the order status and reach out to the customer if needed to provide the link to complete the outstanding payment.</p>'.
 										'<p>Best regards,<br>{websitename}</p>',
 				'orders_view_display' => '[1]',
@@ -391,7 +391,7 @@ class plgPCPBtcpay_ServerInstallerScript extends InstallerScript
 										'<p><strong>Customer Name:</strong> {bs_name_first} {bs_name_last}</p>'.
 										'<p><strong>Order Number:</strong> {ordernumber}</p>'.
 										'<p><strong>Customer Email:</strong> {b_email}</p>'.
-										'<p><strong>Link to complete payment:</strong> <a href="{websiteurl}index.php?option=com_phocacart&amp;view=response&amp;task=response.paymentnotify&amp;type=btcpay_server&amp;o={ordertoken}"></a></p>'.
+										'<p><strong>Link to complete payment:</strong> <a href="{websiteurl}index.php?option=com_phocacart&amp;view=response&amp;task=response.paymentnotify&amp;type=btcpay_server&amp;o={ordertoken}">Payment Link</a></p>'.
 										'<p>Please monitor the order status and reach out to the customer if needed to provide the link to complete the payment.</p>'.
 										'<p>Best regards,<br>{websitename}</p>',
 				'orders_view_display' => '[1]',
@@ -440,7 +440,7 @@ class plgPCPBtcpay_ServerInstallerScript extends InstallerScript
 										'<p><strong>Customer Name:</strong> {bs_name_first} {bs_name_last}</p>'.
 										'<p><strong>Order Number:</strong> {ordernumber}</p>'.
 										'<p><strong>Customer Email:</strong> {b_email}</p>'.
-										'<p><strong>Link to complete payment:</strong> <a href="{websiteurl}index.php?option=com_phocacart&amp;view=response&amp;task=response.paymentnotify&amp;type=btcpay_server&amp;o={ordertoken}"></a></p>'.
+										'<p><strong>Link to complete payment:</strong> <a href="{websiteurl}index.php?option=com_phocacart&amp;view=response&amp;task=response.paymentnotify&amp;type=btcpay_server&amp;o={ordertoken}">Payment Link</a></p>'.
 										'<p>Please monitor the order status and reach out to the customer if needed to provide the link to complete the payment.</p>'.
 										'<p>Best regards,<br>{websitename}</p>',
 				'orders_view_display' => '[1]',
