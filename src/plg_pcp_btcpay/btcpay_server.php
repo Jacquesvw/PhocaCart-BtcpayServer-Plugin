@@ -206,6 +206,7 @@ class plgPCPBtcpay_Server extends CMSPlugin
 		}
 		
 		// JavaScript functions for handling BTCPay invoice and modal
+		// Starting from BTCPay Server 2.0, the status options have been updated. Previously, the statuses were 'new', 'paid', 'complete', 'invalid', and 'expired'. These have now been replaced with 'New', 'Processing', 'Settled', 'Invalid', and 'Expired'
 		$js .= <<<JS
 			function openBTCPayInvoice(invoiceId) {
 				window.btcpay.showInvoice(invoiceId);
@@ -269,16 +270,20 @@ class plgPCPBtcpay_Server extends CMSPlugin
 						const failureUrl = '$failureUrl';
 						switch (status) {
 							case "paid":
+							case "Processing":
 								redirectUrl = successUrl + '&mid=1';
 								break;
 							case "confirmed":
 							case "complete":
+							case "Settled":
 								redirectUrl = successUrl + '&mid=2';
 								break;
 							case "expired":
+							case "Expired":
 								redirectUrl = failureUrl + '&mid=1';
 								break;
 							case "invalid":
+							case "Invalid":
 								redirectUrl = failureUrl + '&mid=2';
 								break;
 							default:
