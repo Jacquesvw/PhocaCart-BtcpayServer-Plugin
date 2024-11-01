@@ -154,7 +154,7 @@ class BTCPayHelper
 			$invoiceDetails = $invoice->getData();
 			$invoiceDetails['totalPaid'] = bcmul($payments[0]['totalPaid'] ?? '0', $payments[0]['rate'] ?? '0', 2);
 			$invoiceDetails['due'] = bcmul($payments[0]['due'] ?? '0', $payments[0]['rate'] ?? '0', 2);
-			$invoiceDetails['paymentMethod'] = $payments[0]['paymentMethod'] ?? null;
+			$invoiceDetails['paymentMethod'] = $payments[0]['paymentMethod'] ?? $payments[0]['paymentMethodId'] ?? null; // BTCPay 2.0.0 compatibility: paymentMethod was renamed to paymentMethodId
 			
 			return $this->invoiceDetails[$invoiceId] = $invoiceDetails;
 		} catch (\Throwable $e) {
