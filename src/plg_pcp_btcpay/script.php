@@ -60,6 +60,7 @@ class plgPCPBtcpay_ServerInstallerScript extends InstallerScript
 		$this->addPaymentMethod();
 		$this->addCustomOrderStatuses();
 		$this->moveImageFiles();
+		$this->setDefaultRestrictedStatuses();
 	}
 
 
@@ -630,5 +631,33 @@ class plgPCPBtcpay_ServerInstallerScript extends InstallerScript
 		
 		// Return true if Phoca Cart is installed, false otherwise
 		return (bool) $phocaCartInstalled;
+	}
+
+
+
+	/**
+	 * Sets the default restricted payment statuses for the BTCPay Server plugin.
+	 *
+	 * This function predefines the restricted payment statuses (e.g., Cancelled and Refunded) 
+	 * in the plugin parameters to ensure that payments cannot be processed for these statuses by default. 
+	 * The restricted statuses are stored as an array in the plugin configuration.
+	 *
+	 * @return void
+	 */
+	public function setDefaultRestrictedStatuses()
+	{
+		$pluginName = 'btcpay_server';
+		
+		// Define the default restricted payment statuses
+		$defaultStatuses = [3, 5]; // 3 = Cancelled, 5 = Refunded
+		
+		// Get the current plugin parameters
+		$currentParams = UtilityHelper::getPluginParams($pluginName);
+	
+		// Set or update the restricted payment statuses
+		$newParams = ['restricted_payment_statuses' => $defaultStatuses];
+	
+		// Update the plugin parameters with the new restricted statuses
+		UtilityHelper::updatePluginParams($pluginName, $newParams);
 	}
 }
