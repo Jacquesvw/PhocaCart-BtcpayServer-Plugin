@@ -77,6 +77,7 @@
 					<option value="show_info_before_payment">PLG_PCP_BTCPAY_SERVER_OPTION_SHOW_INFO_BEFORE_PAYMENT</option>
 				</field>
 				<field name="checkout_info" type="textarea" label="PLG_PCP_BTCPAY_SERVER_FIELD_CHECKOUT_INFO_LABEL" description="PLG_PCP_BTCPAY_SERVER_FIELD_CHECKOUT_INFO_DESC" rows="6" filter="safehtml" showon="checkout_mode:show_info_before_payment" default="Click the 'Pay Now' button below when you are ready to proceed. The exact amount of Bitcoin and the destination address will be provided. Please complete the transaction within the given time to avoid potential changes to the exchange rate."/>
+				<field name="restricted_payment_statuses" type="btcpaystatusmultiselect" size="10" multiple="true" label="PLG_PCP_BTCPAY_SERVER_FIELD_RESTRICTED_PAYMENT_STATUSES_LABEL" description="PLG_PCP_BTCPAY_SERVER_FIELD_RESTRICTED_PAYMENT_STATUSES_DESC"/>
 			</fieldset>
 		</fields>
 	</form>

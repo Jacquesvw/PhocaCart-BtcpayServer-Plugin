@@ -119,6 +119,16 @@ class plgPCPBtcpay_Server extends CMSPlugin
 			return false;
 		}
 		
+		// Check if the current order status is in the list of restricted statuses
+		$orderStatusId = $order['common']->status_id;
+		$restrictedStatuses = $params->get('restricted_payment_statuses', []);
+		
+		// If the order status is one of the restricted statuses, show an alert and prevent payment
+		if (in_array($orderStatusId, $restrictedStatuses)) {
+			$form = '<div class="alert alert-danger" role="alert">' . Text::_('PLG_PCP_BTCPAY_SERVER_PAYMENT_NOT_ALLOWED_MESSAGE') . '</div>';
+			return true; // Prevent further payment processing
+		}
+		
 		// Extract necessary order details
 		$orderId = $order['common']->id;
 		$orderNumber = PhocacartOrder::getOrderNumber($orderId, $order['common']->date, $order['common']->order_number);
