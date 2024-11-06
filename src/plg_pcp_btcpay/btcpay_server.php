@@ -31,6 +31,7 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 
 jimport( 'joomla.plugin.plugin' );
 jimport( 'joomla.filesystem.file');
@@ -162,8 +163,9 @@ class plgPCPBtcpay_Server extends CMSPlugin
 		$orderAmountDue = max($orderAmount - $orderAmountPaid, 0);
 		
 		// Construct the URLs
-		$successUrl = filter_var("/index.php?option=com_phocacart&view=response&task=response.paymentrecieve&type={$this->pluginName}&o={$orderToken}", FILTER_SANITIZE_URL);
-		$failureUrl = filter_var("/index.php?option=com_phocacart&view=response&task=response.paymentcancel&type={$this->pluginName}&o={$orderToken}", FILTER_SANITIZE_URL);
+		$rootUrl = Uri::root(false);
+		$successUrl = filter_var($rootUrl . "index.php?option=com_phocacart&view=response&task=response.paymentrecieve&type={$this->pluginName}&o={$orderToken}", FILTER_SANITIZE_URL);
+		$failureUrl = filter_var($rootUrl . "index.php?option=com_phocacart&view=response&task=response.paymentcancel&type={$this->pluginName}&o={$orderToken}", FILTER_SANITIZE_URL);
 		
 		// Get any BTCPay Server invoice data for this order if it exists
 		$btcpayDbData = UtilityHelper::getBtcpayInvoiceByOrderNumber($orderNumber);
@@ -234,7 +236,7 @@ class plgPCPBtcpay_Server extends CMSPlugin
 					payNowLink.style.opacity = '0.5';
 				}
 				const xhr = new XMLHttpRequest();
-				xhr.open('POST', '/index.php?option=com_ajax&plugin={$this->pluginName}&group=pcp&task=createbtcpayinvoice&format=json', true);
+				xhr.open('POST', '{$rootUrl}index.php?option=com_ajax&plugin={$this->pluginName}&group=pcp&task=createbtcpayinvoice&format=json', true);
 				xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 				
 				xhr.onreadystatechange = function() {
@@ -650,7 +652,7 @@ class plgPCPBtcpay_Server extends CMSPlugin
 		// Retrieve the order token from the input and sanitize it
 		$input = Factory::getApplication()->input;
 		$orderToken = htmlspecialchars($input->getString('o', ''), ENT_QUOTES, 'UTF-8');
-		$link = filter_var("/index.php?option=com_phocacart&view=response&task=response.paymentnotify&type={$this->pluginName}&o={$orderToken}", FILTER_SANITIZE_URL);
+		$link = filter_var(Uri::root(false) . "index.php?option=com_phocacart&view=response&task=response.paymentnotify&type={$this->pluginName}&o={$orderToken}", FILTER_SANITIZE_URL);
 		
 		// Determine the message based on the message ID
 		switch ($messageId) {
