@@ -6,9 +6,9 @@
 		<element>btcpay_server</element>
 		<folder>pcp</folder>
 		<type>plugin</type>
-		<version>1.2.0</version>
+		<version>1.3.0</version>
 		<downloads>
-			<downloadurl type="full" format="zip">https://github.com/Jacquesvw/PhocaCart-BtcpayServer-Plugin/releases/download/v1.2.0/plg_pcp_btcpay.zip</downloadurl>
+			<downloadurl type="full" format="zip">https://github.com/Jacquesvw/PhocaCart-BtcpayServer-Plugin/releases/download/v1.3.0/plg_pcp_btcpay.zip</downloadurl>
 		</downloads>
 		<tags>
 			<tag>stable</tag>
@@ -18,7 +18,7 @@
 		<targetplatform name="joomla" version="(4|5)\.*"/>
 		<client>site</client>
 		<checksums>
-			<checksum type="sha256">ab5daa70f75f6c275f655250f6023e443b833302b0078967c5e9b1d6325f5445</checksum>
+			<checksum type="sha256">d28a7aa9491b0fc72261bb58a73485e18b91b01661d7208c171930fd5a6e580a</checksum>
 		</checksums>
 	</update>
 </updates>
