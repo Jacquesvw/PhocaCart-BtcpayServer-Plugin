@@ -280,6 +280,12 @@ class BtcpayServerController extends BaseController
 			$app->close();
 		}
 		
+		// Check if the order has already been paid, preventing the creation of a new invoice.
+		if ($orderAmountDue == 0) {
+			echo json_encode(['ok' => false, 'msg' => 'This order has already been fully paid. No outstanding amount remains.', 'invoice_id' => '']);
+			$app->close();
+		}
+		
 		// An existing invoice ID was not found, prepare customer data for a new BTCPay Server invoice
 		$btcpayCustomerEmail = null;
 		$btcpayCustomerData = [];
