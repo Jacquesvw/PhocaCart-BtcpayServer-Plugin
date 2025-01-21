@@ -224,10 +224,20 @@ class plgPCPBtcpay_Server extends CMSPlugin
 				window.btcpay.showInvoice(invoiceId);
 			}
 			
+			let isRequestInProgress = false; // Flag to track if an AJAX request is already in progress
+			
 			function getBTCPayInvoice(order_token) {
+				// Prevent the AJAX call if it's already in progress
+				if (isRequestInProgress) {
+					return;
+				}
+				
+				isRequestInProgress = true; // Set the flag to true when the request starts
+				
 				const payNowButton = document.getElementById('pay-now-button');
 				const payNowLink = document.getElementById('pay-now-link');
 				const spinnerElement = document.getElementById('spinner');
+				
 				if (payNowButton) {
 					payNowButton.disabled = true;
 				}
@@ -235,6 +245,7 @@ class plgPCPBtcpay_Server extends CMSPlugin
 					payNowLink.style.pointerEvents = 'none';
 					payNowLink.style.opacity = '0.5';
 				}
+				
 				const xhr = new XMLHttpRequest();
 				xhr.open('POST', '{$rootUrl}index.php?option=com_ajax&plugin={$this->pluginName}&group=pcp&task=createbtcpayinvoice&format=json', true);
 				xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -264,6 +275,9 @@ class plgPCPBtcpay_Server extends CMSPlugin
 								spinnerElement.style.display = 'none';
 							}
 						}
+						
+						// Reset the request flag when the request is finished
+						isRequestInProgress = false;
 					}
 				};
 				
@@ -367,13 +381,13 @@ class plgPCPBtcpay_Server extends CMSPlugin
 		$paymentMethod = $payment->getPaymentMethod((int)$paymentId);
 		$params = $paymentMethod->params;
 		
-		// Retrieve BTCPay server settings from payment parameters
+		// Retrieve BTCPay Server settings from payment parameters
 		$btcpayServerHost = $params->get('btcpay_server_host', '');
 		$btcpayServerApiKey = $params->get('btcpay_server_api_key', '');
 		$btcpayServerStoreId = $params->get('btcpay_server_store_id', '');
 		$btcpayServerWebhookSecret = $params->get('btcpay_server_webhook_secret', '');
 		
-		// Initialize BTCPay server object
+		// Initialize BTCPay Server object
 		$btcpay = new BTCPayHelper($btcpayServerHost, $btcpayServerApiKey, $btcpayServerStoreId);
 		
 		// Validate webhook data
@@ -388,12 +402,12 @@ class plgPCPBtcpay_Server extends CMSPlugin
 		
 		// Extract details from the validated invoice
 		$btcpayInvoiceId = $btcpayInvoice['id'] ?? '';
-		$btcpayInvoiceStatus = $btcpayInvoice['status'] ?? '';
-		$btcpayAdditionalStatus = $btcpayInvoice['additionalStatus'] ?? '';
+		$btcpayInvoiceStatus = $btcpayInvoice['status'] ?? null;
+		$btcpayAdditionalStatus = $btcpayInvoice['additionalStatus'] ?? null;
 		$orderNumber = $btcpayInvoice['metadata']['orderId'] ?? '';
 		$orderAmount = $btcpayInvoice['amount'] ?? 0;
 		$orderAmountPaid = $btcpayInvoice['totalPaid'] ?? 0;
-		$orderCurrencyCode = $btcpayInvoice['currency'] ?? '';
+		$orderCurrencyCode = $btcpayInvoice['currency'] ?? null;
 		
 		// Define default values for order status
 		$orderStatus = 0;
@@ -449,7 +463,7 @@ class plgPCPBtcpay_Server extends CMSPlugin
 				jexit();
 		}
 		
-		// Update BTCPay invoice and order data in the database
+		// Update BTCPay Server invoice and order data in the database
 		$btcpayDbData = [
 			'invoice_id' => $btcpayInvoiceId,
 			'order_number' => $orderNumber,
@@ -458,12 +472,12 @@ class plgPCPBtcpay_Server extends CMSPlugin
 			'currency_code' => $orderCurrencyCode,
 			'amount_due' => $orderAmount,
 			'amount_paid' => $orderAmountPaid,
-			'creation_date' => $btcpayInvoice['createdTime'],
-			'expiration_date' => $btcpayInvoice['expirationTime']
+			'creation_date' => $btcpayInvoice['createdTime'] ?? null,
+			'expiration_date' => $btcpayInvoice['expirationTime'] ?? null
 		];
 		
 		if (UtilityHelper::upsertBtcpayInvoice($btcpayDbData) === false) {
-			PhocacartLog::add(2, 'Payment - BTCPay Server - ERROR', 0, 'Failed to insert or update BTCPay invoice data in the database');
+			PhocacartLog::add(2, 'Payment - BTCPay Server - ERROR', 0, 'Failed to insert or update BTCPay Server webhook invoice data in the database');
 		}
 		
 		// Retrieve order ID using the order number

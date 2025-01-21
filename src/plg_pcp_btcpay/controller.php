@@ -200,15 +200,27 @@ class BtcpayServerController extends BaseController
 			$app->close();
 		}
 		
+		// Initialize the payment class and retrieve method details
 		$paymentId = (int)$orderCommon->payment_id;
 		$orderNumber = PhocacartOrder::getOrderNumber($orderId, $orderCommon->date, $orderCommon->order_number);
 		$orderCurrencyCode = $orderCommon->currency_code;
 		$orderExchangeRate = $orderCommon->currency_exchange_rate ?? 1;
 		
-		// Initialize the payment class and retrieve method details
 		$payment = new PhocacartPayment();
 		$paymentMethod = $payment->getPaymentMethod($paymentId);
 		$params = $paymentMethod->params;
+		
+		// Retrieve plugin parameters related to BTCPay Server
+		$btcpayServerHost = $params->get('btcpay_server_host', '');
+		$btcpayServerApiKey = $params->get('btcpay_server_api_key', '');
+		$btcpayServerStoreId = $params->get('btcpay_server_store_id', '');
+		
+		if (empty($btcpayServerHost) || empty($btcpayServerApiKey) || empty($btcpayServerStoreId)) {
+			$errorMessage = "The BTCPay Server payment plugin is not configured correctly. Please check the plugin settings.";
+			PhocacartLog::add(2, 'Payment - BTCPay Server - ERROR', (int)$orderId, $errorMessage);
+			echo json_encode(['ok' => false, 'msg' => $errorMessage, 'invoice_id' => '']);
+			$app->close();
+		}
 		
 		// Get the currency mode from parameters, defaulting to 'default_currency'
 		$currencyMode = $params->get('currency_mode', 'default_currency');
@@ -254,92 +266,90 @@ class BtcpayServerController extends BaseController
 		$orderAmountPaid = UtilityHelper::getTotalAmountPaidByOrderNumber($orderNumber);
 		$orderAmountDue = max($orderAmount - $orderAmountPaid, 0);
 		
-		// Retrieve plugin parameters related to BTCPay server
-		$btcpayServerHost = $params->get('btcpay_server_host', '');
-		$btcpayServerApiKey = $params->get('btcpay_server_api_key', '');
-		$btcpayServerStoreId = $params->get('btcpay_server_store_id', '');
-		
-		if (empty($btcpayServerHost) || empty($btcpayServerApiKey) || empty($btcpayServerStoreId)) {
-			$errorMessage = "The BTCPay Server payment plugin is not configured correctly. Please check the plugin settings.";
-			PhocacartLog::add(2, 'Payment - BTCPay Server - ERROR', (int)$orderId, $errorMessage);
-			echo json_encode(['ok' => false, 'msg' => $errorMessage, 'invoice_id' => '']);
-			$app->close();
-		}
-		
-		// Initialize BTCPay Server invoice ID and the return URL
-		$btcpayInvoiceId = $btcpayReturnUrl = null;
-		
-		// Get any BTCPay Server invoice data for this order if it exists
+		// Check for an existing valid BTCPay Server invoice ID in the database to avoid generating multiple invoices
 		$btcpayDbData = UtilityHelper::getBtcpayInvoiceByOrderNumber($orderNumber);
 		
-		// Check for a valid BTCPay Server invoice
 		if (!empty($btcpayDbData) && (
 			($btcpayDbData['status'] == 'New' && time() < $btcpayDbData['expiration_date']) || 
 			($btcpayDbData['status'] == 'Processing') || 
 			($btcpayDbData['status'] == 'Expired' && $btcpayDbData['additional_status'] == 'PaidLate' && $orderAmountDue == 0) || 
 			($btcpayDbData['status'] == 'Settled' && $orderAmountDue == 0))) {
 			
-			// Existing valid invoice
-			$btcpayInvoiceId = $btcpayDbData['invoice_id'];
-			
-		} else {
-			
-			// Prepare customer data for the BTCPay Server invoice
-			$btcpayCustomerEmail = null;
-			$btcpayCustomerData = [];
-			foreach ($params->get('customer_data', []) as $field) {
-				switch ($field) {
-					case 'name':
-						$btcpayCustomerData['buyerName'] = implode(' ', array_filter([
-							$orderCustomerData['b']['name_first'] ?? null,
-							$orderCustomerData['b']['name_middle'] ?? null,
-							$orderCustomerData['b']['name_last'] ?? null
-						]));
-						break;
-					
-					case 'email':
-						$btcpayCustomerEmail = $orderCustomerData['b']['email'] ?? null;
-						break;
-					
-					case 'phone':
-						$btcpayCustomerData['buyerPhone'] = $orderCustomerData['b']['phone_mobile'] ?? null;
-						break;
-					
-					case 'address':
-						$btcpayCustomerData = array_merge($btcpayCustomerData, [
-							'buyerAddress1' => $orderCustomerData['b']['address_1'] ?? null,
-							'buyerAddress2' => $orderCustomerData['b']['address_2'] ?? null,
-							'buyerCity' => $orderCustomerData['b']['city'] ?? null,
-							'buyerState' => $orderCustomerData['b']['regiontitle'] ?? null,
-							'buyerZip' => $orderCustomerData['b']['zip'] ?? null,
-							'buyerCountry' => $orderCustomerData['b']['countrytitle'] ?? null
-						]);
-						break;
-					
-					case 'tax':
-						$btcpayCustomerData['taxIncluded'] = $orderTaxAmount ?? null;
-						break;
-				}
+			// An existing invoice ID was found, return it and stop further processing
+			echo json_encode(['ok' => true, 'msg' => 'Reusing existing BTCPay Server invoice.', 'invoice_id' => $btcpayDbData['invoice_id']]);
+			$app->close();
+		}
+		
+		// An existing invoice ID was not found, prepare customer data for a new BTCPay Server invoice
+		$btcpayCustomerEmail = null;
+		$btcpayCustomerData = [];
+		foreach ($params->get('customer_data', []) as $field) {
+			switch ($field) {
+				case 'name':
+					$btcpayCustomerData['buyerName'] = implode(' ', array_filter([
+						$orderCustomerData['b']['name_first'] ?? null,
+						$orderCustomerData['b']['name_middle'] ?? null,
+						$orderCustomerData['b']['name_last'] ?? null
+					]));
+					break;
+				
+				case 'email':
+					$btcpayCustomerEmail = $orderCustomerData['b']['email'] ?? null;
+					break;
+				
+				case 'phone':
+					$btcpayCustomerData['buyerPhone'] = $orderCustomerData['b']['phone_mobile'] ?? null;
+					break;
+				
+				case 'address':
+					$btcpayCustomerData = array_merge($btcpayCustomerData, [
+						'buyerAddress1' => $orderCustomerData['b']['address_1'] ?? null,
+						'buyerAddress2' => $orderCustomerData['b']['address_2'] ?? null,
+						'buyerCity' => $orderCustomerData['b']['city'] ?? null,
+						'buyerState' => $orderCustomerData['b']['regiontitle'] ?? null,
+						'buyerZip' => $orderCustomerData['b']['zip'] ?? null,
+						'buyerCountry' => $orderCustomerData['b']['countrytitle'] ?? null
+					]);
+					break;
+				
+				case 'tax':
+					$btcpayCustomerData['taxIncluded'] = $orderTaxAmount ?? null;
+					break;
 			}
-			
-			// Construct the return URL
-			$btcpayReturnUrl = filter_var(Uri::root(false) . "index.php?option=com_phocacart&view=response&task=response.paymentnotify&type={$this->pluginName}&pid={$paymentId}&o={$orderToken}", FILTER_SANITIZE_URL);
-			
-			// Create a new BTCPay Server invoice
-			$btcpay = new BTCPayHelper($btcpayServerHost, $btcpayServerApiKey, $btcpayServerStoreId);
-			$btcpayInvoice = $btcpay->createInvoice($orderNumber, $orderAmountDue, $orderCurrencyCode, $btcpayCustomerEmail, $btcpayCustomerData, $btcpayReturnUrl);
-			
-			if ($btcpayInvoice === null) {
-				PhocacartLog::add(2, 'Payment - BTCPay Server - ERROR', (int)$orderId, 'Create Invoice Failed: ' . $btcpay->lastError);
-				echo json_encode(['ok' => false, 'msg' => 'An error occurred while processing your payment. Please try again later or contact support.', 'invoice_id' => '']);
-				$app->close();
-			}
-			
-			$btcpayInvoiceId = $btcpayInvoice['id'];
+		}
+		
+		// Construct the return URL
+		$btcpayReturnUrl = filter_var(Uri::root(false) . "index.php?option=com_phocacart&view=response&task=response.paymentnotify&type={$this->pluginName}&pid={$paymentId}&o={$orderToken}", FILTER_SANITIZE_URL);
+		
+		// Create a new BTCPay Server invoice
+		$btcpay = new BTCPayHelper($btcpayServerHost, $btcpayServerApiKey, $btcpayServerStoreId);
+		$btcpayInvoice = $btcpay->createInvoice($orderNumber, $orderAmountDue, $orderCurrencyCode, $btcpayCustomerEmail, $btcpayCustomerData, $btcpayReturnUrl);
+		
+		if ($btcpayInvoice === null || empty($btcpayInvoice['id'])) {
+			PhocacartLog::add(2, 'Payment - BTCPay Server - ERROR', (int)$orderId, 'Create Invoice Failed: ' . $btcpay->lastError);
+			echo json_encode(['ok' => false, 'msg' => 'An error occurred while processing your payment. Please try again later or contact support.', 'invoice_id' => '']);
+			$app->close();
+		}
+		
+		// Store the newly created BTCPay Server invoice and order data in the database to account for potential webhook processing delays
+		$btcpayDbData = [
+			'invoice_id' => $btcpayInvoice['id'],
+			'order_number' => $orderNumber,
+			'status' => $btcpayInvoice['status'] ?? null,
+			'additional_status' => $btcpayInvoice['additionalStatus'] ?? null,
+			'currency_code' => $orderCurrencyCode,
+			'amount_due' => $orderAmountDue,
+			'amount_paid' => $btcpayInvoice['totalPaid'] ?? 0,
+			'creation_date' => $btcpayInvoice['createdTime'] ?? null,
+			'expiration_date' => $btcpayInvoice['expirationTime'] ?? null
+		];
+		
+		if (UtilityHelper::upsertBtcpayInvoice($btcpayDbData) === false) {
+			PhocacartLog::add(2, 'Payment - BTCPay Server - ERROR', 0, 'Failed to insert newly created BTCPay Server invoice data in the database');
 		}
 		
 		// Return the success status as a JSON response
-		echo json_encode(['ok' => true, 'msg' => 'BTCPay Server invoice created successfully.', 'invoice_id' => htmlspecialchars($btcpayInvoiceId, ENT_QUOTES, 'UTF-8')]);
+		echo json_encode(['ok' => true, 'msg' => 'BTCPay Server invoice created successfully.', 'invoice_id' => htmlspecialchars($btcpayInvoice['id'], ENT_QUOTES, 'UTF-8')]);
 		$app->close();
 	}
 }
