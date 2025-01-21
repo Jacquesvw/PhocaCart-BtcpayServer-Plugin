@@ -200,12 +200,12 @@ class BtcpayServerController extends BaseController
 			$app->close();
 		}
 		
-		// Initialize the payment class and retrieve method details
 		$paymentId = (int)$orderCommon->payment_id;
 		$orderNumber = PhocacartOrder::getOrderNumber($orderId, $orderCommon->date, $orderCommon->order_number);
 		$orderCurrencyCode = $orderCommon->currency_code;
 		$orderExchangeRate = $orderCommon->currency_exchange_rate ?? 1;
 		
+		// Initialize the payment class and retrieve method details
 		$payment = new PhocacartPayment();
 		$paymentMethod = $payment->getPaymentMethod($paymentId);
 		$params = $paymentMethod->params;
